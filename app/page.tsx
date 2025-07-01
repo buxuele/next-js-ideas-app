@@ -1,9 +1,8 @@
 // 文件路径: src/app/page.tsx
-"use client"; // 整个页面都需要用户交互，所以我们把它标记为客户端组件
+"use client";
 
 import { useState, useEffect, FormEvent } from 'react';
 
-// 定义 Note 的数据类型，让代码更健壮
 type Note = {
   id: string;
   content: string;
@@ -16,7 +15,6 @@ export default function HomePage() {
   const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  // 定义一个函数，用于从我们的 API 获取所有笔记
   const fetchNotes = async () => {
     setIsLoading(true);
     try {
@@ -25,67 +23,83 @@ export default function HomePage() {
       setNotes(data.notes || []);
     } catch (error) {
       console.error("获取笔记失败:", error);
-      // 可以在这里设置一个错误状态，在界面上提示用户
     }
     setIsLoading(false);
   };
 
-  // useEffect 这个 Hook 会在组件第一次加载到屏幕上时，运行一次里面的代码
   useEffect(() => {
     fetchNotes();
-  }, []); // 空数组 [] 表示这个 effect 只在最开始运行一次
+  }, []);
 
-  // 处理表单提交的函数
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault(); // 阻止表单提交时页面刷新
-    if (!content.trim()) return; // 如果输入为空，则不提交
-
+    e.preventDefault();
+    if (!content.trim()) return;
     await fetch('/api/notes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, category: 'Capture' }), // 新笔记默认分类为 Capture
+      body: JSON.stringify({ content, category: 'Capture' }),
     });
-
-    setContent(''); // 提交后清空输入框
-    fetchNotes(); // 关键：重新获取笔记列表，从而刷新界面显示
+    setContent('');
+    fetchNotes();
+  };
+  
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('确定要删除这个想法吗？它将无法恢复。')) {
+      return;
+    }
+    await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+    fetchNotes();
   };
 
-  // 下面是页面的 JSX 结构
   return (
-    <main className="flex min-h-screen flex-col items-center p-8 sm:p-24 bg-gray-50">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">MindStream</h1>
+    <main className="flex min-h-screen flex-col items-center p-8 sm:p-12 bg-brand-cream text-brand-green-dark">
+      <div className="w-full max-w-6xl">
+        <h1 className="text-4xl md:text-5xl font-bold mb-10 text-center">
+          嘿，你在想什么。
+        </h1>
         
-        <form onSubmit={handleSubmit} className="mb-8">
+        <form onSubmit={handleSubmit} className="mb-12 max-w-xl mx-auto">
           <input
             type="text"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="记录一闪而过的想法..."
-            className="w-full p-2 border rounded text-black bg-white"
+            className="w-full p-3 border-2 border-brand-green-light rounded-lg text-lg bg-white focus:border-brand-orange-dark focus:ring-0"
           />
-          <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            添加想法
+          <button type="submit" className="w-full mt-3 px-4 py-3 bg-brand-green-dark text-white rounded-lg hover:bg-brand-green-light font-bold text-lg">
+            记下来
           </button>
         </form>
         
-        <div className="space-y-4">
-          {isLoading ? (
-            <p className="text-gray-500 text-center">正在加载想法...</p>
-          ) : notes.length > 0 ? (
-            notes.map((note) => (
-              <div key={note.id} className="p-4 bg-white rounded-lg shadow">
-                <p className="text-sm text-gray-500 font-semibold">{note.category}</p>
-                <p className="mt-1 text-gray-800">{note.content}</p>
-                <p className="text-xs text-gray-400 mt-2 text-right">
-                  {new Date(note.created_at).toLocaleString()}
-                </p>
+        {isLoading ? (
+          <p className="text-center text-lg">正在加载你的想法...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {notes.map((note) => (
+              <div 
+                key={note.id} 
+                className="p-5 bg-brand-orange-light rounded-lg shadow-md border-2 border-brand-orange-dark flex flex-col justify-between hover:shadow-xl transition-shadow duration-300"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-brand-green-dark opacity-75">{note.category}</p>
+                  <p className="mt-2 text-lg text-brand-green-dark break-words">{note.content}</p>
+                </div>
+                
+                <div className="mt-4 pt-4 border-t border-brand-orange-dark border-opacity-30 flex justify-between items-center">
+                   <p className="text-xs text-brand-green-dark opacity-60">
+                    {new Date(note.created_at).toLocaleDateString()}
+                  </p>
+                  <button 
+                    onClick={() => handleDelete(note.id)}
+                    className="px-2 py-1 text-xs text-red-700 hover:bg-red-100 rounded-md transition-colors"
+                  >
+                    删除
+                  </button>
+                </div>
               </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500">还没有任何想法，快记录你的第一个吧！</p>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
