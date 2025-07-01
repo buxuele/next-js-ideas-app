@@ -1,103 +1,92 @@
-import Image from "next/image";
+// 文件路径: src/app/page.tsx
+"use client"; // 整个页面都需要用户交互，所以我们把它标记为客户端组件
 
-export default function Home() {
+import { useState, useEffect, FormEvent } from 'react';
+
+// 定义 Note 的数据类型，让代码更健壮
+type Note = {
+  id: string;
+  content: string;
+  category: string;
+  created_at: string;
+};
+
+export default function HomePage() {
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [content, setContent] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 定义一个函数，用于从我们的 API 获取所有笔记
+  const fetchNotes = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/notes');
+      const data = await res.json();
+      setNotes(data.notes || []);
+    } catch (error) {
+      console.error("获取笔记失败:", error);
+      // 可以在这里设置一个错误状态，在界面上提示用户
+    }
+    setIsLoading(false);
+  };
+
+  // useEffect 这个 Hook 会在组件第一次加载到屏幕上时，运行一次里面的代码
+  useEffect(() => {
+    fetchNotes();
+  }, []); // 空数组 [] 表示这个 effect 只在最开始运行一次
+
+  // 处理表单提交的函数
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault(); // 阻止表单提交时页面刷新
+    if (!content.trim()) return; // 如果输入为空，则不提交
+
+    await fetch('/api/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content, category: 'Capture' }), // 新笔记默认分类为 Capture
+    });
+
+    setContent(''); // 提交后清空输入框
+    fetchNotes(); // 关键：重新获取笔记列表，从而刷新界面显示
+  };
+
+  // 下面是页面的 JSX 结构
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="flex min-h-screen flex-col items-center p-8 sm:p-24 bg-gray-50">
+      <div className="w-full max-w-2xl">
+        <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">MindStream</h1>
+        
+        <form onSubmit={handleSubmit} className="mb-8">
+          <input
+            type="text"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="记录一闪而过的想法..."
+            className="w-full p-2 border rounded text-black bg-white"
+          />
+          <button type="submit" className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            添加想法
+          </button>
+        </form>
+        
+        <div className="space-y-4">
+          {isLoading ? (
+            <p className="text-gray-500 text-center">正在加载想法...</p>
+          ) : notes.length > 0 ? (
+            notes.map((note) => (
+              <div key={note.id} className="p-4 bg-white rounded-lg shadow">
+                <p className="text-sm text-gray-500 font-semibold">{note.category}</p>
+                <p className="mt-1 text-gray-800">{note.content}</p>
+                <p className="text-xs text-gray-400 mt-2 text-right">
+                  {new Date(note.created_at).toLocaleString()}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500">还没有任何想法，快记录你的第一个吧！</p>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </main>
   );
 }
