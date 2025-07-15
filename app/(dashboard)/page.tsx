@@ -62,13 +62,6 @@ export default function HomePage() {
 
   return (
     <div className="w-full max-w-none px-4">
-      <div className="max-w-4xl mx-auto mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          欢迎回来，{session?.user?.displayName || session?.user?.name}！
-        </h1>
-        <p className="text-gray-600">分享你的想法，记录生活的美好瞬间</p>
-      </div>
-
       {/* Post Creation Form */}
       <div className="max-w-4xl mx-auto mb-6">
         <PostCreationForm onPostCreated={handlePostCreated} />

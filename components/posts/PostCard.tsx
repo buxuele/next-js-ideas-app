@@ -69,7 +69,7 @@ export default function PostCard({
 
   return (
     <>
-      <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-100 overflow-hidden hover:shadow-md transition-shadow">
+      <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-amber-200 overflow-hidden hover:shadow-md transition-shadow">
         {/* Post Content */}
         <div className="p-4">
           <p className="text-gray-900 whitespace-pre-wrap break-words">
@@ -139,7 +139,7 @@ export default function PostCard({
         )}
 
         {/* Post Footer */}
-        <div className="px-4 py-3 border-t bg-gray-50 flex justify-between items-center">
+        <div className="px-4 py-3 border-t bg-amber-100 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             {/* Author Info (for explore page) */}
             {post.user && (

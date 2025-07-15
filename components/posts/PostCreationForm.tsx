@@ -67,6 +67,12 @@ export default function PostCreationForm({
       // Show success toast
       showSuccess("发布成功", "你的帖子已成功发布");
 
+      // Reset file input
+      const fileInput = document.getElementById(
+        "image-upload"
+      ) as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
+
       // Notify parent component
       onPostCreated?.();
     } catch (error) {
@@ -80,12 +86,39 @@ export default function PostCreationForm({
     }
   };
 
-  const handleImagesChange = (imageUrls: string[]) => {
-    setUploadedImages(imageUrls);
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    if (uploadedImages.length + files.length > 5) {
+      showError("上传失败", "最多只能上传5张图片");
+      return;
+    }
+
+    const newImages: string[] = [];
+    for (const file of files) {
+      if (file.size > 2 * 1024 * 1024) {
+        showError("上传失败", `文件 ${file.name} 太大，最大2MB`);
+        continue;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        newImages.push(result);
+        if (newImages.length === files.length) {
+          setUploadedImages((prev) => [...prev, ...newImages]);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-100 p-4">
+    <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-amber-200 p-4">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         {/* Text Input */}
         <div>
@@ -120,11 +153,67 @@ export default function PostCreationForm({
           </div>
         </div>
 
-        {/* Image Upload */}
-        <ImageUpload
-          onImagesChange={handleImagesChange}
-          disabled={isSubmitting}
-        />
+        {/* Image Upload Button */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <button
+              type="button"
+              onClick={() => document.getElementById("image-upload")?.click()}
+              disabled={isSubmitting}
+              className="p-2 text-blue-500 hover:bg-blue-50 rounded-full transition-colors"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
+            <input
+              id="image-upload"
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="hidden"
+              disabled={isSubmitting}
+            />
+            {uploadedImages.length > 0 && (
+              <span className="text-sm text-gray-500">
+                {uploadedImages.length} 张图片
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Image Previews */}
+        {uploadedImages.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {uploadedImages.map((imageUrl, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={imageUrl}
+                  alt={`Upload ${index + 1}`}
+                  className="w-full h-20 object-cover rounded border"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
+                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (
