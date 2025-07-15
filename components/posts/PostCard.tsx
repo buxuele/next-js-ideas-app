@@ -69,7 +69,7 @@ export default function PostCard({
 
   return (
     <>
-      <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-amber-200 overflow-hidden hover:shadow-md transition-shadow">
+      <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-gray-800 overflow-hidden hover:shadow-md transition-shadow">
         {/* Post Content */}
         <div className="p-4">
           <p className="text-gray-900 whitespace-pre-wrap break-words">

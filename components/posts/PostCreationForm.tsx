@@ -118,8 +118,8 @@ export default function PostCreationForm({
   };
 
   return (
-    <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-amber-200 p-4">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+    <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-gray-800 p-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
         {/* Text Input */}
         <div>
           <textarea
@@ -195,20 +195,20 @@ export default function PostCreationForm({
 
         {/* Image Previews */}
         {uploadedImages.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-5 gap-2">
             {uploadedImages.map((imageUrl, index) => (
               <div key={index} className="relative">
                 <Image
                   src={imageUrl}
                   alt={`Upload ${index + 1}`}
-                  width={80}
-                  height={80}
-                  className="w-full h-20 object-cover rounded border"
+                  width={60}
+                  height={60}
+                  className="w-full h-16 object-cover rounded border"
                 />
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs hover:bg-red-600"
                 >
                   ×
                 </button>

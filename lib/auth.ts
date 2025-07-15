@@ -63,14 +63,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             session.user.username = user.username || "";
             session.user.displayName =
               user.display_name || session.user.name || "";
-            session.user.image = user.avatar_url || session.user.image || "";
+            session.user.image = user.avatar_url || session.user.image || null;
           } else {
             // If user not found in database, set default values
             session.user.id = "";
             session.user.username = session.user.name || "";
             session.user.displayName = session.user.name || "";
             // Keep original GitHub avatar if available
-            session.user.image = session.user.image || "";
+            session.user.image = session.user.image || null;
           }
         } catch (error) {
           console.error("Error fetching user session:", error);
@@ -79,7 +79,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           session.user.username = session.user.name || "";
           session.user.displayName = session.user.name || "";
           // Keep original GitHub avatar if available
-          session.user.image = session.user.image || "";
+          session.user.image = session.user.image || null;
         }
       }
       return session;

@@ -24,7 +24,7 @@ export default function Navigation({ user }: NavigationProps) {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="bg-amber-50 shadow-sm border-b border-gray-800">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
@@ -61,14 +61,22 @@ export default function Navigation({ user }: NavigationProps) {
           {/* User Menu */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              {user?.image && (
+              {user?.image ? (
                 <Image
                   src={user.image}
                   alt={user.displayName || user.name || "User"}
                   width={32}
                   height={32}
-                  className="rounded-full"
+                  className="rounded-full border border-gray-300"
                 />
+              ) : (
+                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                  <span className="text-gray-600 text-sm font-medium">
+                    {(user?.displayName || user?.name || "U")
+                      .charAt(0)
+                      .toUpperCase()}
+                  </span>
+                </div>
               )}
               <div className="hidden md:block">
                 <p className="text-sm font-medium text-gray-900">
