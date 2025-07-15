@@ -7,13 +7,13 @@ import Image from "next/image";
 
 interface NavigationProps {
   user: {
-    id: string;
+    id?: string;
     name?: string | null;
     email?: string | null;
     image?: string | null;
     username?: string;
     displayName?: string;
-  };
+  } | null;
 }
 
 export default function Navigation({ user }: NavigationProps) {
@@ -61,7 +61,7 @@ export default function Navigation({ user }: NavigationProps) {
           {/* User Menu */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              {user.image && (
+              {user?.image && (
                 <Image
                   src={user.image}
                   alt={user.displayName || user.name || "User"}
@@ -72,9 +72,11 @@ export default function Navigation({ user }: NavigationProps) {
               )}
               <div className="hidden md:block">
                 <p className="text-sm font-medium text-gray-900">
-                  {user.displayName || user.name}
+                  {user?.displayName || user?.name || "用户"}
                 </p>
-                <p className="text-xs text-gray-500">@{user.username}</p>
+                <p className="text-xs text-gray-500">
+                  @{user?.username || "unknown"}
+                </p>
               </div>
             </div>
 

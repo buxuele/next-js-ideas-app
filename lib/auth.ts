@@ -59,13 +59,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (result.rows.length > 0) {
             const user = result.rows[0];
-            session.user.id = user.id;
-            session.user.username = user.username;
-            session.user.displayName = user.display_name;
-            session.user.image = user.avatar_url;
+            session.user.id = user.id || "";
+            session.user.username = user.username || "";
+            session.user.displayName =
+              user.display_name || session.user.name || "";
+            session.user.image = user.avatar_url || session.user.image || "";
+          } else {
+            // If user not found in database, set default values
+            session.user.id = "";
+            session.user.username = session.user.name || "";
+            session.user.displayName = session.user.name || "";
           }
         } catch (error) {
           console.error("Error fetching user session:", error);
+          // Set fallback values on error
+          session.user.id = "";
+          session.user.username = session.user.name || "";
+          session.user.displayName = session.user.name || "";
         }
       }
       return session;
