@@ -69,7 +69,7 @@ export default function PostCard({
 
   return (
     <>
-      <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-gray-800 overflow-hidden hover:shadow-md transition-shadow">
+      <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-gray-600 overflow-hidden hover:shadow-md transition-shadow">
         {/* Post Content */}
         <div className="p-4">
           <p className="text-gray-900 whitespace-pre-wrap break-words">
@@ -156,10 +156,11 @@ export default function PostCard({
                     alt={post.user.display_name || post.user.username}
                     width={24}
                     height={24}
-                    className="rounded-full border-2 border-gray-800"
+                    className="rounded-full border-2 border-gray-600"
+                    unoptimized
                   />
                 ) : (
-                  <div className="w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
                     <span className="text-white text-xs font-medium">
                       {(post.user.display_name || post.user.username || "U")
                         .charAt(0)

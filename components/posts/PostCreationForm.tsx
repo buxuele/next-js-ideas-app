@@ -133,7 +133,7 @@ export default function PostCreationForm({
   };
 
   return (
-    <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-gray-800 p-4">
+    <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-gray-600 p-4">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         {/* Text Input */}
         <div>
@@ -141,7 +141,7 @@ export default function PostCreationForm({
             {...register("content")}
             placeholder="分享你的想法..."
             className={`w-full p-3 border-2 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-              isOverLimit ? "border-red-500" : "border-gray-800"
+              isOverLimit ? "border-red-500" : "border-gray-600"
             }`}
             rows={3}
             disabled={isSubmitting}
@@ -173,17 +173,18 @@ export default function PostCreationForm({
           <div className="grid grid-cols-5 gap-2">
             {uploadedImages.map((imageUrl, index) => (
               <div key={index} className="relative">
-                <Image
-                  src={imageUrl}
-                  alt={`Upload ${index + 1}`}
-                  width={60}
-                  height={60}
-                  className="w-full h-16 object-cover rounded border-2 border-gray-800"
-                />
+                <div className="aspect-square relative">
+                  <Image
+                    src={imageUrl}
+                    alt={`Upload ${index + 1}`}
+                    fill
+                    className="object-cover rounded border-2 border-gray-600"
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs hover:bg-red-600"
+                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
                 >
                   ×
                 </button>
@@ -206,7 +207,7 @@ export default function PostCreationForm({
               type="button"
               onClick={() => document.getElementById("image-upload")?.click()}
               disabled={isSubmitting}
-              className="p-2 text-blue-500 hover:bg-blue-50 rounded-full transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors border border-blue-200 hover:border-blue-300"
             >
               <svg
                 className="w-5 h-5"
@@ -221,6 +222,7 @@ export default function PostCreationForm({
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
+              <span className="text-sm">添加图片</span>
             </button>
             <input
               id="image-upload"

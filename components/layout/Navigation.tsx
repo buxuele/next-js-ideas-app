@@ -24,7 +24,7 @@ export default function Navigation({ user }: NavigationProps) {
   };
 
   return (
-    <nav className="bg-amber-50 shadow-sm border-b-2 border-gray-800">
+    <nav className="bg-amber-50 shadow-sm border-b-2 border-gray-600">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
@@ -42,7 +42,7 @@ export default function Navigation({ user }: NavigationProps) {
                 href="/"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   pathname === "/"
-                    ? "bg-gray-800 text-white"
+                    ? "bg-gray-600 text-white"
                     : "text-gray-700 hover:text-gray-900 hover:bg-amber-100"
                 }`}
               >
@@ -52,7 +52,7 @@ export default function Navigation({ user }: NavigationProps) {
                 href="/explore"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   pathname === "/explore"
-                    ? "bg-gray-800 text-white"
+                    ? "bg-gray-600 text-white"
                     : "text-gray-700 hover:text-gray-900 hover:bg-amber-100"
                 }`}
               >
@@ -68,12 +68,13 @@ export default function Navigation({ user }: NavigationProps) {
                 <Image
                   src={user.image}
                   alt={user.displayName || user.name || "User"}
-                  width={32}
-                  height={32}
-                  className="rounded-full border-2 border-gray-800"
+                  width={36}
+                  height={36}
+                  className="rounded-full border-2 border-gray-600"
+                  unoptimized
                 />
               ) : (
-                <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
+                <div className="w-9 h-9 bg-gray-600 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm font-medium">
                     {(user?.displayName || user?.name || "U")
                       .charAt(0)
@@ -107,7 +108,7 @@ export default function Navigation({ user }: NavigationProps) {
               href="/"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 pathname === "/"
-                  ? "bg-gray-800 text-white"
+                  ? "bg-gray-600 text-white"
                   : "text-gray-700 hover:text-gray-900 hover:bg-amber-100"
               }`}
             >
@@ -117,7 +118,7 @@ export default function Navigation({ user }: NavigationProps) {
               href="/explore"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 pathname === "/explore"
-                  ? "bg-gray-800 text-white"
+                  ? "bg-gray-600 text-white"
                   : "text-gray-700 hover:text-gray-900 hover:bg-amber-100"
               }`}
             >
