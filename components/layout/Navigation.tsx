@@ -24,33 +24,36 @@ export default function Navigation({ user }: NavigationProps) {
   };
 
   return (
-    <nav className="bg-amber-50 shadow-sm border-b border-gray-800">
+    <nav className="bg-white shadow-lg border-b-2 border-gray-200">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <div className="flex items-center space-x-8">
-            <Link href="/" className="text-xl font-bold text-gray-900">
+            <Link
+              href="/"
+              className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+            >
               社交平台
             </Link>
 
             {/* Navigation Links */}
-            <div className="hidden md:flex space-x-6">
+            <div className="hidden md:flex space-x-2">
               <Link
                 href="/"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   pathname === "/"
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                 }`}
               >
                 我的主页
               </Link>
               <Link
                 href="/explore"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   pathname === "/explore"
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                 }`}
               >
                 探索发现
@@ -65,13 +68,13 @@ export default function Navigation({ user }: NavigationProps) {
                 <Image
                   src={user.image}
                   alt={user.displayName || user.name || "User"}
-                  width={32}
-                  height={32}
-                  className="rounded-full border border-gray-300"
+                  width={40}
+                  height={40}
+                  className="rounded-full border-2 border-blue-200 hover:border-blue-400 transition-colors"
                 />
               ) : (
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                  <span className="text-gray-600 text-sm font-medium">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-blue-200">
+                  <span className="text-white text-sm font-bold">
                     {(user?.displayName || user?.name || "U")
                       .charAt(0)
                       .toUpperCase()}
@@ -79,7 +82,7 @@ export default function Navigation({ user }: NavigationProps) {
                 </div>
               )}
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-semibold text-gray-900">
                   {user?.displayName || user?.name || "用户"}
                 </p>
                 <p className="text-xs text-gray-500">
@@ -90,7 +93,7 @@ export default function Navigation({ user }: NavigationProps) {
 
             <button
               onClick={handleSignOut}
-              className="text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors"
+              className="text-sm text-gray-600 hover:text-red-600 px-4 py-2 rounded-full hover:bg-red-50 transition-all duration-200 font-medium"
             >
               退出登录
             </button>
@@ -99,23 +102,23 @@ export default function Navigation({ user }: NavigationProps) {
 
         {/* Mobile Navigation */}
         <div className="md:hidden pb-4">
-          <div className="flex space-x-4">
+          <div className="flex space-x-2">
             <Link
               href="/"
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 pathname === "/"
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               }`}
             >
               我的主页
             </Link>
             <Link
               href="/explore"
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 pathname === "/explore"
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               }`}
             >
               探索发现

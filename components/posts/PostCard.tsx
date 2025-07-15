@@ -69,21 +69,21 @@ export default function PostCard({
 
   return (
     <>
-      <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-gray-800 overflow-hidden hover:shadow-md transition-shadow">
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
         {/* Post Content */}
-        <div className="p-4">
-          <p className="text-gray-900 whitespace-pre-wrap break-words">
+        <div className="p-5">
+          <p className="text-gray-800 whitespace-pre-wrap break-words leading-relaxed">
             {post.content}
           </p>
         </div>
 
         {/* Images */}
         {post.images && post.images.length > 0 && (
-          <div className="px-4 pb-4">
+          <div className="px-5 pb-4">
             {post.images.length === 1 ? (
               // Single image
               <div
-                className="relative aspect-auto cursor-pointer rounded-lg overflow-hidden"
+                className="relative cursor-pointer rounded-xl overflow-hidden group"
                 onClick={() => openImageModal(0)}
               >
                 <OptimizedImage
@@ -91,42 +91,57 @@ export default function PostCard({
                   alt="Post image"
                   width={post.images[0].width || 400}
                   height={post.images[0].height || 300}
-                  className="w-full h-auto object-cover hover:opacity-95 transition-opacity"
+                  className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
               </div>
             ) : (
-              // Multiple images grid
+              // Multiple images grid - improved layout
               <div
-                className={`grid gap-2 ${
+                className={`grid gap-3 ${
                   post.images.length === 2
                     ? "grid-cols-2"
                     : post.images.length === 3
-                    ? "grid-cols-2"
-                    : "grid-cols-2"
+                    ? "grid-cols-3"
+                    : post.images.length === 4
+                    ? "grid-cols-2 grid-rows-2"
+                    : "grid-cols-3"
                 }`}
               >
-                {post.images.slice(0, 4).map((image, index) => (
+                {post.images.slice(0, 5).map((image, index) => (
                   <div
                     key={image.id}
-                    className={`relative cursor-pointer rounded-lg overflow-hidden ${
+                    className={`relative cursor-pointer rounded-lg overflow-hidden group ${
                       post.images!.length === 3 && index === 0
-                        ? "col-span-2"
+                        ? "row-span-2"
+                        : post.images!.length === 5 && index === 0
+                        ? "col-span-2 row-span-2"
                         : ""
                     }`}
                     onClick={() => openImageModal(index)}
                   >
-                    <div className="aspect-square relative">
+                    <div
+                      className={`relative ${
+                        post.images!.length === 3 && index === 0
+                          ? "aspect-[4/5]"
+                          : post.images!.length === 5 && index === 0
+                          ? "aspect-[4/3]"
+                          : "aspect-square"
+                      }`}
+                    >
                       <OptimizedImage
                         src={image.image_data}
                         alt={`Post image ${index + 1}`}
                         fill
-                        className="object-cover hover:opacity-95 transition-opacity"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      {/* Show count for more than 4 images */}
-                      {index === 3 && post.images!.length > 4 && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                          <span className="text-white text-lg font-semibold">
-                            +{post.images!.length - 4}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
+
+                      {/* Show count for more than 5 images */}
+                      {index === 4 && post.images!.length > 5 && (
+                        <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                          <span className="text-white text-xl font-bold">
+                            +{post.images!.length - 5}
                           </span>
                         </div>
                       )}
@@ -139,21 +154,29 @@ export default function PostCard({
         )}
 
         {/* Post Footer */}
-        <div className="px-4 py-3 border-t bg-amber-100 flex justify-between items-center">
-          <div className="flex items-center space-x-4">
+        <div className="px-4 py-3 border-t bg-gray-50 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
             {/* Author Info (for explore page) */}
             {post.user && (
               <div className="flex items-center space-x-2">
-                {post.user.avatar_url && (
+                {post.user.avatar_url ? (
                   <Image
                     src={post.user.avatar_url}
                     alt={post.user.display_name || post.user.username}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
+                    width={28}
+                    height={28}
+                    className="rounded-full border border-gray-200"
                   />
+                ) : (
+                  <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-semibold">
+                      {(post.user.display_name || post.user.username || "U")
+                        .charAt(0)
+                        .toUpperCase()}
+                    </span>
+                  </div>
                 )}
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-semibold text-gray-900">
                   {post.user.display_name || post.user.username}
                 </span>
               </div>
@@ -173,7 +196,7 @@ export default function PostCard({
             <button
               onClick={handleDelete}
               disabled={isDeleting}
-              className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors disabled:opacity-50"
+              className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-full transition-all duration-200 disabled:opacity-50 font-medium"
             >
               {isDeleting ? "删除中..." : "删除"}
             </button>
