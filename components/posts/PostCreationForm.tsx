@@ -85,17 +85,17 @@ export default function PostCreationForm({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-100 p-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         {/* Text Input */}
         <div>
           <textarea
             {...register("content")}
             placeholder="分享你的想法..."
-            className={`w-full p-4 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+            className={`w-full p-3 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               isOverLimit ? "border-red-500" : "border-gray-300"
             }`}
-            rows={4}
+            rows={3}
             disabled={isSubmitting}
           />
 

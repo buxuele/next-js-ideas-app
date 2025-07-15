@@ -61,8 +61,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
+    <div className="w-full max-w-none px-4">
+      <div className="max-w-4xl mx-auto mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           欢迎回来，{session?.user?.displayName || session?.user?.name}！
         </h1>
@@ -70,18 +70,20 @@ export default function HomePage() {
       </div>
 
       {/* Post Creation Form */}
-      <div className="mb-8">
+      <div className="max-w-4xl mx-auto mb-6">
         <PostCreationForm onPostCreated={handlePostCreated} />
       </div>
 
-      {/* 3-Column Layout */}
-      <ThreeColumnLayout
-        posts={posts}
-        onLoadMore={handleLoadMore}
-        onPostDeleted={handlePostDeleted}
-        hasMore={hasMore}
-        isLoading={isLoading}
-      />
+      {/* 3-Column Layout - 95% width */}
+      <div className="w-[95%] mx-auto">
+        <ThreeColumnLayout
+          posts={posts}
+          onLoadMore={handleLoadMore}
+          onPostDeleted={handlePostDeleted}
+          hasMore={hasMore}
+          isLoading={isLoading}
+        />
+      </div>
     </div>
   );
 }

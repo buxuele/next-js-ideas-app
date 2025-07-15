@@ -69,6 +69,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             session.user.id = "";
             session.user.username = session.user.name || "";
             session.user.displayName = session.user.name || "";
+            // Keep original GitHub avatar if available
+            session.user.image = session.user.image || "";
           }
         } catch (error) {
           console.error("Error fetching user session:", error);
@@ -76,6 +78,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           session.user.id = "";
           session.user.username = session.user.name || "";
           session.user.displayName = session.user.name || "";
+          // Keep original GitHub avatar if available
+          session.user.image = session.user.image || "";
         }
       }
       return session;
