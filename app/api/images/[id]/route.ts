@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
-import { sql } from "@/lib/db";
-import { del } from "@vercel/blob";
+import { sql } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
 
 // DELETE /api/images/[id] - Delete image from storage
@@ -18,7 +17,7 @@ export async function DELETE(
 
     // Get image info and verify ownership
     const imageResult = await sql`
-      SELECT i.blob_url, p.user_id
+      SELECT p.user_id
       FROM images i
       JOIN posts p ON i.post_id = p.id
       WHERE i.id = ${imageId}
@@ -33,14 +32,6 @@ export async function DELETE(
     // Verify user owns the post containing this image
     if (image.user_id !== session.user.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    try {
-      // Delete from Vercel Blob storage
-      await del(image.blob_url);
-    } catch (error) {
-      console.error("Error deleting from blob storage:", error);
-      // Continue with database deletion even if blob deletion fails
     }
 
     // Delete from database

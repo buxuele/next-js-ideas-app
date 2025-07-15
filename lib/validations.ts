@@ -17,9 +17,7 @@ export const ImageUploadSchema = z.object({
   file: z.instanceof(File),
   size: z.number().max(10 * 1024 * 1024, "File size cannot exceed 10MB"),
   type: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"], {
-    errorMap: () => ({
-      message: "Only JPEG, PNG, WebP, and GIF images are allowed",
-    }),
+    message: "Only JPEG, PNG, WebP, and GIF images are allowed",
   }),
 });
 

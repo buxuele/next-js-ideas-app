@@ -1,31 +1,5 @@
-import { sql } from "@vercel/postgres";
-
-export { sql };
-
-// Database utility functions
-export async function initializeDatabase() {
-  try {
-    // Read and execute schema
-    const fs = require("fs");
-    const path = require("path");
-    const schemaPath = path.join(process.cwd(), "lib/db/schema.sql");
-    const schema = fs.readFileSync(schemaPath, "utf8");
-
-    // Split by semicolon and execute each statement
-    const statements = schema.split(";").filter((stmt) => stmt.trim());
-
-    for (const statement of statements) {
-      if (statement.trim()) {
-        await sql.query(statement);
-      }
-    }
-
-    console.log("Database initialized successfully");
-  } catch (error) {
-    console.error("Error initializing database:", error);
-    throw error;
-  }
-}
+// Re-export sql from @vercel/postgres for consistency
+export { sql } from "@vercel/postgres";
 
 // Type definitions for database entities
 export interface User {
@@ -53,7 +27,7 @@ export interface Post {
 export interface Image {
   id: string;
   post_id: string;
-  blob_url: string;
+  image_data: string;
   filename?: string;
   file_size?: number;
   mime_type?: string;

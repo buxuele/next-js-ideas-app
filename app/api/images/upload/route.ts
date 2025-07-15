@@ -1,9 +1,8 @@
 import { auth } from "@/lib/auth";
-import { put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 
-// POST /api/images/upload - Upload images to Vercel Blob
+// POST /api/images/upload - Upload images to database as base64
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
@@ -38,11 +37,11 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Validate file size (10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
+      // Validate file size (5MB limit for base64 storage)
+      if (file.size > 5 * 1024 * 1024) {
         return NextResponse.json(
           {
-            error: `File ${file.name} is too large. Maximum size is 10MB.`,
+            error: `File ${file.name} is too large. Maximum size is 5MB.`,
           },
           { status: 400 }
         );
@@ -59,8 +58,8 @@ export async function POST(request: NextRequest) {
         const sharpInstance = sharp(buffer);
         metadata = await sharpInstance.metadata();
 
-        // Resize if too large (max 2048px on longest side)
-        const maxSize = 2048;
+        // Resize if too large (max 1024px on longest side for base64 storage)
+        const maxSize = 1024;
         if (metadata.width && metadata.height) {
           const isLandscape = metadata.width > metadata.height;
           const resizeOptions = isLandscape
@@ -69,13 +68,17 @@ export async function POST(request: NextRequest) {
 
           processedBuffer = await sharpInstance
             .resize(resizeOptions)
-            .jpeg({ quality: 85, progressive: true })
+            .jpeg({ quality: 80, progressive: true })
             .toBuffer();
         } else {
           processedBuffer = await sharpInstance
-            .jpeg({ quality: 85, progressive: true })
+            .jpeg({ quality: 80, progressive: true })
             .toBuffer();
         }
+
+        // Get updated metadata after processing
+        const processedMetadata = await sharp(processedBuffer).metadata();
+        metadata = processedMetadata;
       } catch (error) {
         console.error("Error processing image:", error);
         return NextResponse.json(
@@ -86,36 +89,19 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Generate unique filename
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(2, 15);
-      const extension = file.name.split(".").pop() || "jpg";
-      const filename = `${session.user.id}/${timestamp}-${randomString}.${extension}`;
+      // Convert to base64
+      const base64Data = `data:image/jpeg;base64,${processedBuffer.toString(
+        "base64"
+      )}`;
 
-      try {
-        // Upload to Vercel Blob
-        const blob = await put(filename, processedBuffer, {
-          access: "public",
-          contentType: "image/jpeg",
-        });
-
-        uploadedImages.push({
-          url: blob.url,
-          filename: file.name,
-          size: processedBuffer.length,
-          width: metadata.width,
-          height: metadata.height,
-          mimeType: "image/jpeg",
-        });
-      } catch (error) {
-        console.error("Error uploading to blob:", error);
-        return NextResponse.json(
-          {
-            error: `Error uploading image ${file.name}`,
-          },
-          { status: 500 }
-        );
-      }
+      uploadedImages.push({
+        data: base64Data,
+        filename: file.name,
+        size: processedBuffer.length,
+        width: metadata.width,
+        height: metadata.height,
+        mimeType: "image/jpeg",
+      });
     }
 
     return NextResponse.json({

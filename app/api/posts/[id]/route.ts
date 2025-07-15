@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
-import { sql } from "@/lib/db";
-import { del } from "@vercel/blob";
+import { sql } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
 
 // DELETE /api/posts/[id] - Delete user's own post
@@ -29,22 +28,6 @@ export async function DELETE(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Get associated images before deletion (for cleanup)
-    const imagesResult = await sql`
-      SELECT blob_url FROM images WHERE post_id = ${postId}
-    `;
-
-    // Delete images from Vercel Blob storage
-    const imageUrls = imagesResult.rows.map((row) => row.blob_url);
-    for (const url of imageUrls) {
-      try {
-        await del(url);
-      } catch (error) {
-        console.error("Error deleting image from blob storage:", error);
-        // Continue with other deletions even if one fails
-      }
-    }
-
     // Delete post (images will be deleted by CASCADE)
     await sql`
       DELETE FROM posts WHERE id = ${postId}
@@ -52,7 +35,6 @@ export async function DELETE(
 
     return NextResponse.json({
       message: "Post deleted successfully",
-      deletedImages: imageUrls,
     });
   } catch (error) {
     console.error("Error deleting post:", error);

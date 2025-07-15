@@ -22,20 +22,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // Create new user
             await sql`
               INSERT INTO users (github_id, username, display_name, email, avatar_url)
-              VALUES (${profile.id}, ${profile.login}, ${
+              VALUES (${String(profile.id)}, ${String(profile.login)}, ${String(
               profile.name || profile.login
-            }, ${profile.email}, ${profile.avatar_url})
+            )}, ${String(profile.email || "")}, ${String(
+              profile.avatar_url || ""
+            )})
             `;
           } else {
             // Update existing user info
             await sql`
               UPDATE users 
-              SET username = ${profile.login}, 
-                  display_name = ${profile.name || profile.login},
-                  email = ${profile.email},
-                  avatar_url = ${profile.avatar_url},
+              SET username = ${String(profile.login)}, 
+                  display_name = ${String(profile.name || profile.login)},
+                  email = ${String(profile.email || "")},
+                  avatar_url = ${String(profile.avatar_url || "")},
                   updated_at = NOW()
-              WHERE github_id = ${profile.id}
+              WHERE github_id = ${String(profile.id)}
             `;
           }
           return true;

@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE TABLE IF NOT EXISTS images (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
-  blob_url TEXT NOT NULL,
+  image_data TEXT NOT NULL,
   filename VARCHAR(255),
   file_size INTEGER,
   mime_type VARCHAR(100),

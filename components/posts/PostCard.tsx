@@ -87,7 +87,7 @@ export default function PostCard({
                 onClick={() => openImageModal(0)}
               >
                 <OptimizedImage
-                  src={post.images[0].blob_url}
+                  src={post.images[0].image_data}
                   alt="Post image"
                   width={post.images[0].width || 400}
                   height={post.images[0].height || 300}
@@ -117,7 +117,7 @@ export default function PostCard({
                   >
                     <div className="aspect-square relative">
                       <OptimizedImage
-                        src={image.blob_url}
+                        src={image.image_data}
                         alt={`Post image ${index + 1}`}
                         fill
                         className="object-cover hover:opacity-95 transition-opacity"
@@ -250,7 +250,7 @@ export default function PostCard({
             {/* Image */}
             <div className="relative">
               <OptimizedImage
-                src={post.images[selectedImageIndex].blob_url}
+                src={post.images[selectedImageIndex].image_data}
                 alt={`Post image ${selectedImageIndex + 1}`}
                 width={post.images[selectedImageIndex].width || 800}
                 height={post.images[selectedImageIndex].height || 600}

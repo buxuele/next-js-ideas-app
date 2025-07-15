@@ -75,7 +75,7 @@ export default function ImageUpload({
 
       const data = await response.json();
       const newImages = data.images.map((img: any) => ({
-        url: img.url,
+        url: img.data,
         filename: img.filename,
         size: img.size,
       }));

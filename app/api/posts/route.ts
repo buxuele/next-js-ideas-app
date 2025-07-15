@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { sql } from "@/lib/db";
+import { sql } from "@vercel/postgres";
 import { PostSchema } from "@/lib/validations";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
             CASE WHEN i.id IS NOT NULL THEN
               JSON_BUILD_OBJECT(
                 'id', i.id,
-                'blob_url', i.blob_url,
+                'image_data', i.image_data,
                 'filename', i.filename,
                 'width', i.width,
                 'height', i.height,
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { error: "Validation failed", details: validation.error.errors },
+        { error: "Validation failed", details: validation.error.issues },
         { status: 400 }
       );
     }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     if (images.length > 0) {
       for (let i = 0; i < images.length; i++) {
         await sql`
-          INSERT INTO images (post_id, blob_url, upload_order)
+          INSERT INTO images (post_id, image_data, upload_order)
           VALUES (${post.id}, ${images[i]}, ${i})
         `;
       }

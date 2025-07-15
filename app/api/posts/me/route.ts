@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { sql } from "@/lib/db";
+import { sql } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/posts/me - Get current user's posts
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
             CASE WHEN i.id IS NOT NULL THEN
               JSON_BUILD_OBJECT(
                 'id', i.id,
-                'blob_url', i.blob_url,
+                'image_data', i.image_data,
                 'filename', i.filename,
                 'width', i.width,
                 'height', i.height,
