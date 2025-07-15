@@ -95,21 +95,36 @@ export default function PostCreationForm({
       return;
     }
 
-    const newImages: string[] = [];
-    for (const file of files) {
-      if (file.size > 2 * 1024 * 1024) {
-        showError("上传失败", `文件 ${file.name} 太大，最大2MB`);
-        continue;
-      }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        newImages.push(result);
-        if (newImages.length === files.length) {
-          setUploadedImages((prev) => [...prev, ...newImages]);
+    try {
+      const newImages: string[] = [];
+
+      // Process files one by one to ensure proper order
+      for (const file of files) {
+        if (file.size > 2 * 1024 * 1024) {
+          showError("上传失败", `文件 ${file.name} 太大，最大2MB`);
+          continue;
         }
-      };
-      reader.readAsDataURL(file);
+
+        // Convert file to base64 using Promise
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const result = e.target?.result as string;
+            resolve(result);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        newImages.push(base64);
+      }
+
+      if (newImages.length > 0) {
+        setUploadedImages((prev) => [...prev, ...newImages]);
+      }
+    } catch (error) {
+      console.error("Error processing images:", error);
+      showError("上传失败", "图片处理失败，请重试");
     }
   };
 
@@ -118,38 +133,34 @@ export default function PostCreationForm({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="bg-amber-50 rounded-lg shadow-sm border-2 border-gray-800 p-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         {/* Text Input */}
         <div>
           <textarea
             {...register("content")}
             placeholder="分享你的想法..."
-            className={`w-full p-4 border-2 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 ${
-              isOverLimit
-                ? "border-red-400 focus:border-red-500 focus:ring-red-500"
-                : "border-gray-200 hover:border-gray-300"
+            className={`w-full p-3 border-2 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              isOverLimit ? "border-red-500" : "border-gray-800"
             }`}
-            rows={4}
+            rows={3}
             disabled={isSubmitting}
           />
 
           {/* Character Counter */}
-          <div className="flex justify-between items-center mt-3">
-            <div className="text-sm">
+          <div className="flex justify-between items-center mt-2">
+            <div className="text-sm text-gray-500">
               {errors.content && (
-                <span className="text-red-500 font-medium">
-                  {errors.content.message}
-                </span>
+                <span className="text-red-500">{errors.content.message}</span>
               )}
             </div>
             <div
-              className={`text-sm font-semibold ${
+              className={`text-sm font-medium ${
                 isOverLimit
                   ? "text-red-500"
                   : characterCount > 250
-                  ? "text-amber-500"
-                  : "text-gray-400"
+                  ? "text-yellow-500"
+                  : "text-gray-500"
               }`}
             >
               {characterCount}/280
@@ -159,20 +170,20 @@ export default function PostCreationForm({
 
         {/* Image Previews */}
         {uploadedImages.length > 0 && (
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-5 gap-2">
             {uploadedImages.map((imageUrl, index) => (
-              <div key={index} className="relative group">
+              <div key={index} className="relative">
                 <Image
                   src={imageUrl}
                   alt={`Upload ${index + 1}`}
-                  width={80}
-                  height={80}
-                  className="w-full h-20 object-cover rounded-lg border-2 border-gray-200 group-hover:border-blue-300 transition-colors"
+                  width={60}
+                  height={60}
+                  className="w-full h-16 object-cover rounded border-2 border-gray-800"
                 />
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition-colors shadow-md"
+                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs hover:bg-red-600"
                 >
                   ×
                 </button>
@@ -183,19 +194,19 @@ export default function PostCreationForm({
 
         {/* Error Message */}
         {error && (
-          <div className="p-4 bg-red-50 border-l-4 border-red-400 rounded-lg">
-            <p className="text-sm text-red-700 font-medium">{error}</p>
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
 
         {/* Bottom Row: Image Upload Button and Submit Button */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
             <button
               type="button"
               onClick={() => document.getElementById("image-upload")?.click()}
               disabled={isSubmitting}
-              className="flex items-center space-x-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-200 font-medium border border-blue-200 hover:border-blue-300"
+              className="p-2 text-blue-500 hover:bg-blue-50 rounded-full transition-colors"
             >
               <svg
                 className="w-5 h-5"
@@ -210,7 +221,6 @@ export default function PostCreationForm({
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <span className="text-sm">添加图片</span>
             </button>
             <input
               id="image-upload"
@@ -222,7 +232,7 @@ export default function PostCreationForm({
               disabled={isSubmitting}
             />
             {uploadedImages.length > 0 && (
-              <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              <span className="text-sm text-gray-500">
                 {uploadedImages.length} 张图片
               </span>
             )}
@@ -231,10 +241,10 @@ export default function PostCreationForm({
           <button
             type="submit"
             disabled={isSubmitting || !content?.trim() || isOverLimit}
-            className={`px-8 py-2.5 rounded-full font-semibold transition-all duration-200 ${
+            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
               isSubmitting || !content?.trim() || isOverLimit
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transform hover:scale-105"
+                : "bg-blue-600 text-white hover:bg-blue-700"
             }`}
           >
             {isSubmitting ? "发布中..." : "发布"}
