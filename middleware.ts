@@ -7,17 +7,21 @@ export default auth((req) => {
 
   // Public routes that don't require authentication
   const isPublicRoute =
-    nextUrl.pathname.startsWith("/login") ||
-    nextUrl.pathname.startsWith("/api/auth");
+    nextUrl.pathname === "/login" ||
+    nextUrl.pathname.startsWith("/api/auth") ||
+    nextUrl.pathname.startsWith("/_next") ||
+    nextUrl.pathname === "/favicon.ico";
 
   // If not logged in and trying to access protected route
   if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/login", nextUrl));
+    const loginUrl = new URL("/login", nextUrl.origin);
+    return NextResponse.redirect(loginUrl);
   }
 
   // If logged in and trying to access login page
-  if (isLoggedIn && nextUrl.pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/", nextUrl));
+  if (isLoggedIn && nextUrl.pathname === "/login") {
+    const homeUrl = new URL("/", nextUrl.origin);
+    return NextResponse.redirect(homeUrl);
   }
 
   return NextResponse.next();
