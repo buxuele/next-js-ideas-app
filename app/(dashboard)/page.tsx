@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import { Post } from "@/lib/db";
 import PostCreationForm from "@/components/posts/PostCreationForm";
 import ThreeColumnLayout from "@/components/posts/ThreeColumnLayout";
 
 export default function HomePage() {
-  const { data: session } = useSession();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PostSchema, type PostInput } from "@/lib/validations";
 import { useToast } from "@/components/ui/ToastContainer";
-import ImageUpload from "./ImageUpload";
+import Image from "next/image";
 
 interface PostCreationFormProps {
   onPostCreated?: () => void;
@@ -198,9 +198,11 @@ export default function PostCreationForm({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {uploadedImages.map((imageUrl, index) => (
               <div key={index} className="relative">
-                <img
+                <Image
                   src={imageUrl}
                   alt={`Upload ${index + 1}`}
+                  width={80}
+                  height={80}
                   className="w-full h-20 object-cover rounded border"
                 />
                 <button
