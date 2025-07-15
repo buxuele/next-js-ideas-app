@@ -56,7 +56,7 @@ npm run db:init
 npm run dev
 \`\`\`
 
-访问 [http://localhost:3000](http://localhost:3000) 查看应用。
+访问 [http://localhost:7000](http://localhost:7000) 查看应用。
 
 ## 项目结构
 

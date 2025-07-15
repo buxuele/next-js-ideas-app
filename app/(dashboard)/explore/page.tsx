@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Post } from "@/lib/db";
 import PostCard from "@/components/posts/PostCard";
 
@@ -10,42 +10,45 @@ export default function ExplorePage() {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
 
-  const fetchPosts = async (pageNum: number = 1, append: boolean = false) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/posts?page=${pageNum}&limit=10`);
+  const fetchPosts = useCallback(
+    async (pageNum: number = 1, append: boolean = false) => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/posts?page=${pageNum}&limit=10`);
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch posts");
+        if (!response.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+
+        const data = await response.json();
+        const newPosts = data.posts || [];
+
+        if (append) {
+          setPosts((prev) => [...prev, ...newPosts]);
+        } else {
+          setPosts(newPosts);
+        }
+
+        setHasMore(newPosts.length === 10);
+        setPage(pageNum);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setIsLoading(false);
       }
-
-      const data = await response.json();
-      const newPosts = data.posts || [];
-
-      if (append) {
-        setPosts((prev) => [...prev, ...newPosts]);
-      } else {
-        setPosts(newPosts);
-      }
-
-      setHasMore(newPosts.length === 10);
-      setPage(pageNum);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    []
+  );
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [fetchPosts]);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
       fetchPosts(page + 1, true);
     }
-  };
+  }, [isLoading, hasMore, page, fetchPosts]);
 
   // Infinite scroll
   useEffect(() => {
@@ -60,7 +63,7 @@ export default function ExplorePage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [page, hasMore, isLoading]);
+  }, [page, hasMore, isLoading, handleLoadMore]);
 
   return (
     <div className="max-w-4xl mx-auto">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export interface ToastProps {
   id: string;
@@ -21,6 +21,11 @@ export default function Toast({
 }: ToastProps) {
   const [isVisible, setIsVisible] = useState(false);
 
+  const handleClose = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(() => onClose(id), 300); // Wait for animation
+  }, [id, onClose]);
+
   useEffect(() => {
     // Trigger animation
     setIsVisible(true);
@@ -31,12 +36,7 @@ export default function Toast({
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [duration]);
-
-  const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(() => onClose(id), 300); // Wait for animation
-  };
+  }, [duration, handleClose]);
 
   const getIcon = () => {
     switch (type) {

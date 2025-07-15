@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 // DELETE /api/posts/[id] - Delete user's own post
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -13,7 +13,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const postId = params.id;
+    const { id: postId } = await params;
 
     // Verify post belongs to current user
     const postCheck = await sql`

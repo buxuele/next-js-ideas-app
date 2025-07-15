@@ -74,11 +74,13 @@ export default function ImageUpload({
       }
 
       const data = await response.json();
-      const newImages = data.images.map((img: any) => ({
-        url: img.data,
-        filename: img.filename,
-        size: img.size,
-      }));
+      const newImages = data.images.map(
+        (img: { data: string; filename: string; size: number }) => ({
+          url: img.data,
+          filename: img.filename,
+          size: img.size,
+        })
+      );
 
       updateImages([...images, ...newImages]);
       showSuccess("上传成功", `成功上传 ${newImages.length} 张图片`);

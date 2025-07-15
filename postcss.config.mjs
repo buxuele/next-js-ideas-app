@@ -1,9 +1,8 @@
-// 文件路径: postcss.config.mjs
 const config = {
   plugins: {
-    tailwindcss: {},
+    "@tailwindcss/postcss": {},
     autoprefixer: {},
   },
-}
+};
 
-export default config
+export default config;

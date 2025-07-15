@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 // DELETE /api/images/[id] - Delete image from storage
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -13,7 +13,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const imageId = params.id;
+    const { id: imageId } = await params;
 
     // Get image info and verify ownership
     const imageResult = await sql`
