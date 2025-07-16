@@ -1,4 +1,7 @@
-# 社交分享平台
+# 社交平台
+
+
+![效果图](效果图/a1.jpg)
 
 基于 Next.js 15 和 GitHub 认证的现代化社交分享平台，支持文本和图片分享。
 
@@ -12,24 +15,7 @@
 - 🔍 **探索发现** - 浏览其他用户的精彩内容
 - 🎯 **简洁界面** - 推特风格的简约设计
 
-## 🖥️ 界面预览
-
-### 主页面 - 3 列瀑布流布局
-
-![主页面效果图](./screenshots/homepage.png)
-
-### 发帖界面 - 推特风格
-
-![发帖界面效果图](./screenshots/post-creation.png)
-
-### 探索页面
-
-![探索页面效果图](./screenshots/explore.png)
-
-### 移动端适配
-
-![移动端效果图](./screenshots/mobile.png)
-
+## 🖥️ 界面预览 
 ## 🚀 技术栈
 
 ### 前端
@@ -63,26 +49,24 @@
 
 ### 1. 克隆项目
 
-\`\`\`bash
+```bash
 git clone https://github.com/your-username/next-js-ideas-app.git
 cd next-js-ideas-app
-\`\`\`
+```
 
 ### 2. 安装依赖
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### 3. 环境变量配置
 
 复制环境变量模板：
-\`\`\`bash
+```bash
 cp .env.local.example .env.local
-\`\`\`
-
-编辑 \`.env.local\` 文件：
-\`\`\`bash
+```
+ 
 
 # 认证配置
 
@@ -94,33 +78,30 @@ NEXTAUTH_SECRET=your-secret-key
 GITHUB_ID=your-github-app-id
 GITHUB_SECRET=your-github-app-secret
 
-# 数据库
-
-DATABASE_URL=your-neon-database-url
-\`\`\`
 
 ### 4. 数据库设置
 
-参考 \`docs/neon-setup.md\` 配置 Neon 数据库，并在 SQL 编辑器中执行：
-\`\`\`sql
+参考 `docs/neon-setup.md` 配置 Neon 数据库，并在 SQL 编辑器中执行：
+
+```sql
 -- 执行 docs/database-schema.sql 中的建表语句
-\`\`\`
+```
 
 ### 5. GitHub OAuth 配置
 
-参考 \`docs/github-oauth-setup.md\` 配置 GitHub OAuth 应用。
+参考 `docs/github-oauth-setup.md` 配置 GitHub OAuth 应用。
 
 ### 6. 启动开发服务器
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 访问 [http://localhost:7000](http://localhost:7000) 查看应用。
 
 ## 📁 项目结构
 
-\`\`\`
+```bash
 ├── app/ # Next.js App Router
 │ ├── (auth)/ # 认证相关页面
 │ │ └── login/ # 登录页面
@@ -154,7 +135,7 @@ npm run dev
 │ ├── github-oauth-setup.md # GitHub OAuth 配置指南
 │ └── database-schema.sql # 数据库建表语句
 └── types/ # TypeScript 类型定义
-\`\`\`
+```
 
 ## 🎨 设计特色
 
@@ -187,13 +168,13 @@ npm run dev
 
 ### 环境变量（生产环境）
 
-\`\`\`bash
+```bash
 NEXTAUTH_URL=https://your-domain.vercel.app
 NEXTAUTH_SECRET=your-production-secret
 GITHUB_ID=your-production-github-id
 GITHUB_SECRET=your-production-github-secret
 DATABASE_URL=your-neon-database-url
-\`\`\`
+```
 
 ## 📝 开发说明
 
@@ -211,16 +192,5 @@ DATABASE_URL=your-neon-database-url
 - 图片以 Base64 格式存储在数据库中
 - 支持最多 5 张图片，单张最大 2MB
 
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 📄 许可证
-
-MIT License
-
----
-
 **Live Demo**: [https://next-js-ideas-app.vercel.app](https://next-js-ideas-app.vercel.app)
 
-**GitHub**: [https://github.com/your-username/next-js-ideas-app](https://github.com/your-username/next-js-ideas-app)
