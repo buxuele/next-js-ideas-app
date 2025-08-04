@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "raw.githubusercontent.com",
         port: "",
-        pathname: "/buxuele/next-js-ideas-app/main/imgs/**",
+        pathname: "/buxuele/next-js-ideas-app/main/public/imgs/**",
       },
     ],
   },
