@@ -7,6 +7,13 @@ export async function GET(
   { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
+    // 在生产环境中，图片应该直接从 GitHub 获取，不需要这个 API
+    if (process.env.NODE_ENV === "production") {
+      return new NextResponse("Use GitHub raw URLs for images in production", {
+        status: 404,
+      });
+    }
+
     const { filename: rawFilename } = await params;
     const filename = decodeURIComponent(rawFilename);
     const imagePath = path.join(

@@ -4,6 +4,13 @@ import path from "path";
 
 export async function GET() {
   try {
+    // 在生产环境中，直接返回预定义的文件夹列表
+    if (process.env.NODE_ENV === "production") {
+      const folders = ["art", "good_art", "t-恤--收集", "top10"];
+      return NextResponse.json({ folders });
+    }
+
+    // 在开发环境中，读取本地文件系统
     const imgsPath = path.join(process.cwd(), "public", "imgs");
 
     // 检查目录是否存在

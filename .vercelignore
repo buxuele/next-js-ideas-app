@@ -1,0 +1,20 @@
+# 忽略图片目录，避免 serverless function 大小超限
+public/imgs/
+
+# 忽略效果图目录
+效果图/
+
+# 忽略其他大文件
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.bmp
+
+# 但保留必要的静态资源
+!public/next.svg
+!public/vercel.svg
+!public/file.svg
+!public/globe.svg
+!public/window.svg
