@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ImageInfo } from "@/lib/image-manager";
-import ImageGallery from "@/components/gallery/ImageGallery";
+import ThreeColumnGallery from "@/components/gallery/ThreeColumnGallery";
 
 export default function HomePage() {
   const [images, setImages] = useState<ImageInfo[]>([]);
@@ -14,7 +14,24 @@ export default function HomePage() {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch("/api/gallery");
+      // 先获取文件夹列表
+      const foldersResponse = await fetch("/api/folders");
+      if (!foldersResponse.ok) {
+        throw new Error("Failed to fetch folders");
+      }
+
+      const foldersData = await foldersResponse.json();
+      const firstFolder = foldersData.folders?.[0];
+
+      if (!firstFolder) {
+        setImages([]);
+        return;
+      }
+
+      // 获取第一个文件夹的图片
+      const response = await fetch(
+        `/api/images?folder=${encodeURIComponent(firstFolder)}`
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch images");
@@ -36,10 +53,26 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">加载图片中...</p>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "400px",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <div
+            style={{
+              width: "48px",
+              height: "48px",
+              border: "2px solid #d97706",
+              borderTop: "2px solid transparent",
+              borderRadius: "50%",
+              margin: "0 auto 16px auto",
+            }}
+          ></div>
+          <p style={{ color: "#4b5563", margin: 0 }}>加载图片中...</p>
         </div>
       </div>
     );
@@ -47,13 +80,26 @@ export default function HomePage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="text-red-500 text-lg mb-2">⚠️</div>
-          <p className="text-red-600">{error}</p>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "400px",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <p style={{ color: "#dc2626", marginBottom: "16px" }}>{error}</p>
           <button
             onClick={fetchImages}
-            className="mt-4 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#d97706",
+              color: "white",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+            }}
           >
             重试
           </button>
@@ -62,15 +108,5 @@ export default function HomePage() {
     );
   }
 
-  return (
-    <div className="w-full max-w-none px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6 text-center">
-          <p className="text-gray-600">共 {images.length} 张精选艺术作品</p>
-        </div>
-
-        <ImageGallery images={images} />
-      </div>
-    </div>
-  );
+  return <ThreeColumnGallery images={images} />;
 }

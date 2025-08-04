@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "艺术画廊",
-  description: "精选艺术作品展示平台",
+  title: "社交平台",
+  description: "基于 GitHub 认证的社交分享平台",
 };
 
 export default function RootLayout({

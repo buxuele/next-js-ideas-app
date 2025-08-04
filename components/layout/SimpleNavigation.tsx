@@ -2,25 +2,38 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function SimpleNavigation() {
   const pathname = usePathname();
+  const [folders, setFolders] = useState<string[]>([]);
 
-  const navItems = [
-    {
-      name: "画廊",
-      href: "/",
-      icon: "🖼️",
-    },
-    {
-      name: "探索",
-      href: "/explore",
-      icon: "🔍",
-    },
-  ];
+  useEffect(() => {
+    // 获取图片文件夹列表
+    const fetchFolders = async () => {
+      try {
+        const response = await fetch("/api/folders");
+        if (response.ok) {
+          const data = await response.json();
+          setFolders(data.folders || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch folders:", error);
+        // 如果API失败，使用默认的文件夹名称
+        setFolders(["art", "good_art", "t-恤--收集", "top10"]);
+      }
+    };
+
+    fetchFolders();
+  }, []);
+
+  const navItems = folders.map((folder, index) => ({
+    name: folder,
+    href: index === 0 ? "/" : `/${encodeURIComponent(folder)}`,
+  }));
 
   return (
-    <nav className="flex space-x-1">
+    <nav className="flex items-center space-x-8">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
 
@@ -29,16 +42,15 @@ export default function SimpleNavigation() {
             key={item.href}
             href={item.href}
             className={`
-              flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
+              px-3 py-2 rounded-md text-sm font-medium
               ${
                 isActive
-                  ? "bg-amber-100 text-amber-800 border border-amber-200"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  ? "bg-gray-600 text-white"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
               }
             `}
           >
-            <span className="text-lg">{item.icon}</span>
-            <span>{item.name}</span>
+            {item.name}
           </Link>
         );
       })}

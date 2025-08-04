@@ -6,19 +6,52 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-amber-50">
-      <header className="bg-white shadow-sm border-b border-amber-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">艺术画廊</h1>
-              <p className="text-gray-600 mt-1">精选艺术作品展示</p>
-            </div>
+    <div style={{ minHeight: "100vh", backgroundColor: "#fef7e0" }}>
+      {/* Navbar - 95% width */}
+      <header
+        style={{
+          backgroundColor: "#fef7e0",
+          borderBottom: "1px solid #9ca3af",
+          width: "100%",
+        }}
+      >
+        <div
+          style={{
+            width: "95vw",
+            margin: "0 auto",
+            height: "44px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "32px" }}>
+            <h1
+              style={{
+                fontSize: "20px",
+                fontWeight: "600",
+                color: "#111827",
+                margin: 0,
+              }}
+            >
+              我的图片
+            </h1>
             <SimpleNavigation />
           </div>
         </div>
       </header>
-      <main className="w-full py-6">{children}</main>
+
+      {/* Content - 95% of viewport width */}
+      <main
+        style={{
+          width: "95vw",
+          maxWidth: "95vw",
+          margin: "24px auto 0 auto",
+          overflow: "hidden",
+          boxSizing: "border-box",
+        }}
+      >
+        {children}
+      </main>
     </div>
   );
 }

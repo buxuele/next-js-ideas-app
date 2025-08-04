@@ -10,14 +10,14 @@ export interface ImageInfo {
 export class ImageManager {
   private readonly GITHUB_REPO =
     "https://raw.githubusercontent.com/buxuele/next-js-ideas-app/main";
-  private readonly LOCAL_IMAGE_DIR = "imgs/good_art";
+  private readonly LOCAL_IMAGE_DIR = "public/imgs/good_art";
 
   /**
    * 获取图片URL - 根据环境返回本地或GitHub URL
    */
   getImageUrl(filename: string): string {
     if (process.env.NODE_ENV === "development") {
-      // 本地开发环境，使用本地URL
+      // 本地开发环境，直接使用public目录的静态文件
       return `/imgs/good_art/${filename}`;
     } else {
       // 生产环境，使用GitHub raw URL
