@@ -31,9 +31,7 @@ class ImageCacheService {
    */
   private async fetchGitHubImages(folder: string): Promise<ImageInfo[]> {
     try {
-      const apiUrl = `https://api.github.com/repos/buxuele/next-js-ideas-app/contents/public/imgs/${encodeURIComponent(
-        folder
-      )}`;
+      const apiUrl = `https://api.github.com/repos/buxuele/next-js-ideas-app/contents/public/imgs/${folder}`;
 
       const response = await fetch(apiUrl, {
         headers: {
@@ -57,7 +55,7 @@ class ImageCacheService {
         return [];
       }
 
-      // 过滤出图片文件
+      // 过滤出图片文件并生成URL
       const imageExtensions = [
         ".jpg",
         ".jpeg",
@@ -66,27 +64,24 @@ class ImageCacheService {
         ".webp",
         ".bmp",
       ];
-      const imageFiles = (files as GitHubFileItem[])
+
+      // 使用GitHub API返回的download_url，这是最可靠的方式
+      return (files as GitHubFileItem[])
         .filter((file) => file.type === "file")
-        .map((file) => file.name)
-        .filter((filename: string) => {
-          const ext = filename
+        .filter((file) => {
+          const ext = file.name
             .toLowerCase()
-            .substring(filename.lastIndexOf("."));
+            .substring(file.name.lastIndexOf("."));
           return imageExtensions.includes(ext);
         })
-        .sort();
-
-      const GITHUB_REPO_BASE =
-        "https://raw.githubusercontent.com/buxuele/next-js-ideas-app/main/public/imgs";
-
-      return imageFiles.map((filename) => ({
-        filename,
-        url: `${GITHUB_REPO_BASE}/${encodeURIComponent(
-          folder
-        )}/${encodeURIComponent(filename)}`,
-        folder,
-      }));
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((file) => ({
+          filename: file.name,
+          url:
+            file.download_url ||
+            `https://raw.githubusercontent.com/buxuele/next-js-ideas-app/main/public/imgs/${folder}/${file.name}`,
+          folder,
+        }));
     } catch (error) {
       console.error(`Error fetching GitHub files for folder ${folder}:`, error);
       return [];
