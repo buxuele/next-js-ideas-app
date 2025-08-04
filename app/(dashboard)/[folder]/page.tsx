@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { ImageInfo } from "@/lib/image-manager";
 import ThreeColumnGallery from "@/components/gallery/ThreeColumnGallery";
@@ -12,7 +12,7 @@ export default function FolderPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchImages = async () => {
+  const fetchImages = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -33,13 +33,13 @@ export default function FolderPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [folder]);
 
   useEffect(() => {
     if (folder) {
       fetchImages();
     }
-  }, [folder]);
+  }, [folder, fetchImages]);
 
   if (isLoading) {
     return (

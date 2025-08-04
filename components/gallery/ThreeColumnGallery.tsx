@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ImageInfo } from "@/lib/image-manager";
 
 interface ThreeColumnGalleryProps {
@@ -82,7 +83,7 @@ export default function ThreeColumnGallery({
               overflow: "hidden",
             }}
           >
-            {column.map((image, index) => (
+            {column.map((image) => (
               <div
                 key={image.filename}
                 style={{ cursor: "pointer" }}
@@ -98,15 +99,17 @@ export default function ThreeColumnGallery({
                     border: "1px solid #e5e7eb",
                   }}
                 >
-                  <img
+                  <Image
                     src={image.url}
                     alt={image.filename}
+                    width={400}
+                    height={300}
                     style={{
                       width: "100%",
                       height: "auto",
                       display: "block",
                     }}
-                    onError={(e) => {
+                    onError={() => {
                       console.error("Image failed to load:", image.url);
                       handleImageError(image.filename);
                     }}
@@ -199,14 +202,18 @@ export default function ThreeColumnGallery({
 
             {/* 图片 */}
             <div style={{ position: "relative" }}>
-              <img
+              <Image
                 src={selectedImage.url}
                 alt={selectedImage.filename}
+                width={800}
+                height={600}
                 style={{
                   maxWidth: "100%",
                   maxHeight: "90vh",
                   objectFit: "contain",
                   borderRadius: "8px",
+                  width: "auto",
+                  height: "auto",
                 }}
                 onClick={(e) => e.stopPropagation()}
               />

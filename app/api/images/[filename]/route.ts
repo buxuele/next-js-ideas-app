@@ -4,10 +4,11 @@ import path from "path";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const filename = decodeURIComponent(params.filename);
+    const { filename: rawFilename } = await params;
+    const filename = decodeURIComponent(rawFilename);
     const imagePath = path.join(
       process.cwd(),
       "public/imgs/good_art",
