@@ -7,6 +7,20 @@ export interface ImageInfo {
   folder: string;
 }
 
+// GitHub API 响应类型定义
+interface GitHubFileItem {
+  name: string;
+  type: "file" | "dir";
+  size?: number;
+  download_url?: string;
+}
+
+interface GitHubDirectoryItem {
+  name: string;
+  type: "file" | "dir";
+  size?: number;
+}
+
 class ImageCacheService {
   private cache: Map<string, ImageInfo[]> = new Map();
   private lastUpdate: Map<string, number> = new Map();
@@ -52,9 +66,9 @@ class ImageCacheService {
         ".webp",
         ".bmp",
       ];
-      const imageFiles = files
-        .filter((file: any) => file.type === "file")
-        .map((file: any) => file.name)
+      const imageFiles = (files as GitHubFileItem[])
+        .filter((file) => file.type === "file")
+        .map((file) => file.name)
         .filter((filename: string) => {
           const ext = filename
             .toLowerCase()
@@ -178,9 +192,9 @@ class ImageCacheService {
           return [];
         }
 
-        return items
-          .filter((item: any) => item.type === "dir")
-          .map((item: any) => item.name)
+        return (items as GitHubDirectoryItem[])
+          .filter((item) => item.type === "dir")
+          .map((item) => item.name)
           .sort();
       } catch (error) {
         console.error(`Error fetching GitHub folders:`, error);
