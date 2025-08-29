@@ -35,7 +35,5 @@ if __name__ == "__main__":
         just_rename_imgs(i)
         print()
 
-
     # just_rename_imgs(target, show=True)
-
 
