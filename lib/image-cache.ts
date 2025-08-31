@@ -128,32 +128,42 @@ class ImageCacheService {
   }
 
   /**
-   * 获取图片列表（带缓存）
+   * 获取图片列表（带缓存和分页）
    */
-  async getImages(folder: string): Promise<ImageInfo[]> {
+  async getImages(
+    folder: string,
+    page: number = 1,
+    limit: number = 30
+  ): Promise<{ images: ImageInfo[]; total: number }> {
     const now = Date.now();
     const lastUpdate = this.lastUpdate.get(folder) || 0;
+    let allImages: ImageInfo[];
 
     // 检查缓存是否有效
     if (this.cache.has(folder) && now - lastUpdate < this.CACHE_DURATION) {
-      return this.cache.get(folder)!;
-    }
-
-    let images: ImageInfo[];
-
-    if (process.env.NODE_ENV === "production") {
-      // 生产环境：从GitHub获取
-      images = await this.fetchGitHubImages(folder);
+      allImages = this.cache.get(folder)!;
     } else {
-      // 开发环境：从本地文件系统获取
-      images = this.getLocalImages(folder);
+      if (process.env.NODE_ENV === "production") {
+        // 生产环境：从GitHub获取
+        allImages = await this.fetchGitHubImages(folder);
+      } else {
+        // 开发环境：从本地文件系统获取
+        allImages = this.getLocalImages(folder);
+      }
+      // 更新缓存
+      this.cache.set(folder, allImages);
+      this.lastUpdate.set(folder, now);
     }
 
-    // 更新缓存
-    this.cache.set(folder, images);
-    this.lastUpdate.set(folder, now);
+    // 根据分页参数返回数据
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const paginatedImages = allImages.slice(startIndex, endIndex);
 
-    return images;
+    return {
+      images: paginatedImages,
+      total: allImages.length,
+    };
   }
 
   /**
