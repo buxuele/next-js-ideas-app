@@ -52,7 +52,7 @@ export default function HomePage() {
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const observer = useRef<IntersectionObserver>();
+  const observer = useRef<IntersectionObserver | null>(null);
   const lastImageElementRef = useCallback(
     (node: HTMLDivElement) => {
       if (isLoading || isFetchingMore) return;
