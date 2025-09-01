@@ -10,6 +10,10 @@
 !.yarn/releases
 !.yarn/versions
 
+# 其他
+我的私人图片/
+
+
 # testing
 /coverage
 
